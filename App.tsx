@@ -102,7 +102,7 @@ const App: React.FC = () => {
             <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 p-4 sticky top-0 z-10">
                 <div className="container mx-auto flex justify-between items-center">
                     <h1 className="text-2xl font-bold text-white tracking-tight">AI File Organizer</h1>
-                    <a href="https://ai.google.dev/gemini-api/docs" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-blue-500 transition-colors">Powered by Gemini</a>
+                    <a href="https://github.com/chongo00/Organizador-IA" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-blue-500 transition-colors">Asistente de IA</a>
                 </div>
             </header>
 
@@ -218,7 +218,7 @@ const App: React.FC = () => {
             </main>
             
             <footer className="text-center p-4 text-gray-500 text-sm">
-                <p>&copy; {new Date().getFullYear()} AI File Organizer. A demo application using the Gemini API.</p>
+                <p>&copy; {new Date().getFullYear()} Organizador de archivos. Creado por chongo00.</p>
             </footer>
         </div>
     );
