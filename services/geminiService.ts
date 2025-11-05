@@ -2,11 +2,10 @@
 import { GoogleGenAI } from "@google/genai";
 import type { OrganizationPlan } from '../types';
 
-// Read the API key from Vite environment variable. Do NOT hardcode keys in source.
-const API_KEY: string = (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
+const API_KEY = "AIzaSyCTUrSd7evBh43x5vA8421eFO07D26EqCc";
 
 if (!API_KEY) {
-  throw new Error("VITE_GEMINI_API_KEY not set. Configure it in .env.local as VITE_GEMINI_API_KEY=YOUR_KEY");
+  throw new Error("API_KEY environment variable not set");
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
@@ -70,7 +69,7 @@ export async function organizeFilesByPrefix(fileNames: string[]): Promise<Organi
 
     return validatedPlan;
   } catch (error) {
-    console.error("Error calling AI service:", error);
+    console.error("Error calling Gemini API:", error);
     throw new Error("Failed to get a valid organization plan from the AI.");
   }
 }
