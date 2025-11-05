@@ -1,0 +1,5 @@
+{
+  "name": "AI File Organizer Script Generator",
+  "description": "Select a folder and this application will use AI to analyze your filenames, suggest an organized folder structure, and generate a script to perform the organization for you.",
+  "requestFramePermissions": []
+}
