@@ -8,15 +8,60 @@ const App: React.FC = () => {
     const [files, setFiles] = useState<File[]>([]);
     const [organizationPlan, setOrganizationPlan] = useState<OrganizationPlan | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isProcessingFiles, setIsProcessingFiles] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [scriptType, setScriptType] = useState<ScriptType>('bash');
     const [copied, setCopied] = useState<boolean>(false);
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-            setFiles(Array.from(event.target.files));
-            setOrganizationPlan(null);
+            const fileList = event.target.files;
+            setIsProcessingFiles(true);
             setError(null);
+            setOrganizationPlan(null);
+            
+            // Procesar archivos de forma asíncrona en lotes para no bloquear la UI
+            // Esto es especialmente importante en Electron con muchas carpetas
+            const processFiles = () => {
+                try {
+                    const filesArray: File[] = [];
+                    const batchSize = 100; // Procesar 100 archivos a la vez
+                    let index = 0;
+                    
+                    const processBatch = () => {
+                        const end = Math.min(index + batchSize, fileList.length);
+                        for (let i = index; i < end; i++) {
+                            filesArray.push(fileList[i]);
+                        }
+                        index = end;
+                        
+                        if (index < fileList.length) {
+                            // Usar requestIdleCallback si está disponible, sino setTimeout
+                            if (typeof requestIdleCallback !== 'undefined') {
+                                requestIdleCallback(processBatch, { timeout: 100 });
+                            } else {
+                                setTimeout(processBatch, 0);
+                            }
+                        } else {
+                            setFiles(filesArray);
+                            setIsProcessingFiles(false);
+                        }
+                    };
+                    
+                    processBatch();
+                } catch (e) {
+                    console.error('Error procesando archivos:', e);
+                    setError('Error al procesar los archivos seleccionados.');
+                    setIsProcessingFiles(false);
+                }
+            };
+            
+            // Iniciar procesamiento en el siguiente tick del event loop
+            if (typeof requestIdleCallback !== 'undefined') {
+                requestIdleCallback(processFiles, { timeout: 100 });
+            } else {
+                setTimeout(processFiles, 0);
+            }
         }
     };
 
@@ -114,11 +159,25 @@ const App: React.FC = () => {
                     {/* Step 1 */}
                     <div className="mb-6">
                         <h3 className="text-lg font-medium text-blue-500 mb-3"><span className="bg-blue-500/20 text-blue-400 rounded-full w-8 h-8 inline-flex items-center justify-center mr-3 font-bold">1</span> Selecciona Tu Carpeta</h3>
-                        <label htmlFor="file-upload" className="w-full md:w-auto cursor-pointer bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center justify-center transition-all duration-200 ease-in-out transform hover:scale-105">
-                            <FolderIcon className="w-5 h-5 mr-2" />
-                            <span>{files.length > 0 ? `${files.length} archivos seleccionados` : 'Elige una carpeta para escanear'}</span>
+                        <label htmlFor="file-upload" className={`w-full md:w-auto cursor-pointer bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center justify-center transition-all duration-200 ease-in-out transform hover:scale-105 ${isProcessingFiles ? 'opacity-50 cursor-wait' : ''}`}>
+                            {isProcessingFiles ? <LoadingIcon className="w-5 h-5 mr-2 animate-spin" /> : <FolderIcon className="w-5 h-5 mr-2" />}
+                            <span>
+                                {isProcessingFiles 
+                                    ? 'Procesando archivos...' 
+                                    : files.length > 0 
+                                        ? `${files.length} archivos seleccionados` 
+                                        : 'Elige una carpeta para escanear'}
+                            </span>
                         </label>
-                        <input id="file-upload" type="file" className="hidden" multiple={true} {...({ webkitdirectory: "", directory: "" } as any)} onChange={handleFileSelect} />
+                        <input 
+                            id="file-upload" 
+                            type="file" 
+                            className="hidden" 
+                            multiple={true} 
+                            {...({ webkitdirectory: "", directory: "" } as any)} 
+                            onChange={handleFileSelect}
+                            disabled={isProcessingFiles}
+                        />
                         <p className="text-xs text-gray-500 mt-2">Tus archivos se procesan localmente en tu navegador y nunca se suben.</p>
                     </div>
 
