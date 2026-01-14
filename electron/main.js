@@ -17,7 +17,7 @@ function createWindow() {
       enableRemoteModule: false,
       webSecurity: true
     },
-    title: 'AI File Organizer',
+    title: 'Organizador de Archivos IA',
     show: false // No mostrar hasta que esté listo
   });
 

@@ -48,7 +48,7 @@ export async function organizeFilesByPrefix(fileNames: string[]): Promise<Organi
     
     const text = response.text;
     if (!text) {
-      throw new Error("AI response is empty.");
+      throw new Error("La respuesta de la IA está vacía.");
     }
     // Sometimes the model wraps the JSON in markdown backticks, so we clean it.
     const cleanedJson = text.replace(/^```json\n?/, '').replace(/\n?```$/, '');
@@ -57,7 +57,7 @@ export async function organizeFilesByPrefix(fileNames: string[]): Promise<Organi
 
     // Additional check to ensure the response format is correct
     if (typeof plan !== 'object' || plan === null || Array.isArray(plan)) {
-      throw new Error("AI response is not a valid JSON object.");
+      throw new Error("La respuesta de la IA no es un objeto JSON válido.");
     }
 
     // Filter out any files from the plan that were not in the original list
@@ -72,8 +72,8 @@ export async function organizeFilesByPrefix(fileNames: string[]): Promise<Organi
 
     return validatedPlan;
   } catch (error) {
-    console.error("Error calling Gemini API:", error);
-    throw new Error("Failed to get a valid organization plan from the AI.");
+    console.error("Error llamando a la API de Gemini:", error);
+    throw new Error("Error al obtener un plan de organización válido de la IA.");
   }
 }
    
