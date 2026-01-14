@@ -118,7 +118,7 @@ const App: React.FC = () => {
                             <FolderIcon className="w-5 h-5 mr-2" />
                             <span>{files.length > 0 ? `${files.length} files selected` : 'Choose a folder to scan'}</span>
                         </label>
-                        <input id="file-upload" type="file" className="hidden" multiple={true} webkitdirectory="" directory="" onChange={handleFileSelect} />
+                        <input id="file-upload" type="file" className="hidden" multiple={true} {...({ webkitdirectory: "", directory: "" } as any)} onChange={handleFileSelect} />
                         <p className="text-xs text-gray-500 mt-2">Your files are processed locally in your browser and are never uploaded.</p>
                     </div>
 

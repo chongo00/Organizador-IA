@@ -47,6 +47,9 @@ export async function organizeFilesByPrefix(fileNames: string[]): Promise<Organi
     });
     
     const text = response.text;
+    if (!text) {
+      throw new Error("AI response is empty.");
+    }
     // Sometimes the model wraps the JSON in markdown backticks, so we clean it.
     const cleanedJson = text.replace(/^```json\n?/, '').replace(/\n?```$/, '');
     
